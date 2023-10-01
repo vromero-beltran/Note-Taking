@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fsPromises = require("fs").promises;
 
 const uniqid = require("uniqid");
 
@@ -6,7 +6,7 @@ module.exports = function(app) {
     app.get("/api/notes", (req, res) => {
         console.log("Execute GET notes request");
         // Read existing notes from db.json file
-        let data = fs.readFileSync("./Develop/db/db.json", "utf8");
+        let data = fsPromises.readFile("./Develop/db/db.json", "utf8");
         res.json(JSON.parse(data));
     });
 
@@ -18,7 +18,7 @@ module.exports = function(app) {
 
         console.log("Execute POST notes request");
 
-        let data = fs.readFileSync("./Develop/db/db.json", "utf8");
+        let data = fsPromises.readFile("./Develop/db/db.json", "utf8");
         const notes = JSON.parse(data);
 
         notes.push(newNote);
@@ -39,7 +39,7 @@ module.exports = function(app) {
     });
 
     app.delete("/api/notes/:id", (req, res) => {
-        let data = fs.readFileSync("./Develop/db/db.json", "utf8");
+        let data = fsPromises.readFile("./Develop/db/db.json", "utf8");
         const notes = JSON.parse(data);
         const newNotes = notes.filter((note) => {
             return note.id !== req.params.id;

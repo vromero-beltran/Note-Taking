@@ -1,13 +1,12 @@
 const express = require('express');
 const path = require('path');
-const fs = require('fs');
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-require('../routes/api-routes.js')(app);
-require('../routes/html-routes.js')(app);
+require('../../routes/api-routes')(app);
+require('../../routes/html-routes')(app);
 
 app.use(express.static(path.join(__dirname + '/Develop/public')));
 require();
