@@ -15,24 +15,42 @@ module.exports = function(app) {
             ...req.body,
             id: uniqid(),
         };
+
         console.log("Execute POST notes request");
 
         let data = fs.readFileSync("./Develop/db/db.json", "utf8");
-        let notes = JSON.parse(data);
+        const notes = JSON.parse(data);
 
-        dataJSON = JSON.parse(data);
+        notes.push(newNote);
 
         fs.writeFile(
             "./Develop/db/db.json",
             JSON.stringify(dataJSON),
             (err, text) => {
                 if (err) {
-                console.error(err);
-                return;
+                    console.error(err);
+                    return;
                 }
                 console.log("HELLO", text);
             }
         );
-        console.log
+        console.log("Success, added a new note");
+        res.json(data);
+    });
+
+    app.delete("/api/notes/:id", (req, res) => {
+        let data = fs.readFileSync("./Develop/db/db.json", "utf8");
+        const notes = JSON.parse(data);
+        const newNotes = notes.filter((note) => {
+            return note.id !== req.params.id;
+        });
+
+        fs.writeFile("./Develop/db/db.json", JSON.stringify(newNotes), (err, text) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+        });
+        res.json(newNotes);
     });
 }
