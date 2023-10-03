@@ -1,7 +1,13 @@
+// Require in the fs promises module from Node.js fs module 
+// This allows us to use the fs module with promises instead of callbacks
 const fsPromises = require("fs").promises;
 
+// Require in the uniqid npm package
+// This will be used to generate unique IDs for each note
 const uniqid = require("uniqid");
 
+// Export a function that will accept the Express app instance
+// This function will contain all the route handlers for the /api routes
 module.exports = function(app) {
     app.get("/api/notes", (req, res) => {
         console.log("Execute GET notes request");
