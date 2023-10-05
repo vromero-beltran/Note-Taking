@@ -10,53 +10,66 @@ const uniqid = require("uniqid");
 // This function will contain all the route handlers for the /api routes
 module.exports = function(app) {
     app.get("/api/notes", (req, res) => {
-        console.log("Execute GET notes request");
-        // Read existing notes from db.json file
-        let data = fsPromises.readFile("./Develop/db/db.json", "utf8");
-        res.json(JSON.parse(data));
-    });
-
-    app.post("/api/notes", (req, res) => {
-        const newNote = {
-            ...req.body,
-            id: uniqid(),
-        };
-
-        console.log("Execute POST notes request");
-
-        let data = fsPromises.readFile("./Develop/db/db.json", "utf8");
-        const notes = JSON.parse(data);
-
-        notes.push(newNote);
-
-        fs.writeFile(
-            "./Develop/db/db.json",
-            JSON.stringify(dataJSON),
-            (err, text) => {
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-                console.log("HELLO", text);
-            }
-        );
-        console.log("Success, added a new note");
-        res.json(data);
-    });
-
-    app.delete("/api/notes/:id", (req, res) => {
-        let data = fsPromises.readFile("./Develop/db/db.json", "utf8");
-        const notes = JSON.parse(data);
-        const newNotes = notes.filter((note) => {
-            return note.id !== req.params.id;
-        });
-
-        fs.writeFile("./Develop/db/db.json", JSON.stringify(newNotes), (err, text) => {
+        // Read the db.json file
+        fs.readFile("./db/db.json", "utf8", (err, data) => {
             if (err) {
                 console.error(err);
-                return;
+                return res.status(500).send("Error reading file");
             }
+          // Parse the data into an array 
+            const notes = JSON.parse(data);
+          // Send the array of note objects as JSON
+            res.json(notes);
         });
-        res.json(newNotes);
     });
+
+
+    app.post('/api/notes', (req, res) => {
+        // Get the new note from the request body
+        const newNote = req.body;
+        // Give the new note a unique id
+        newNote.id = uniqid();
+        // Read the db.json file
+        fs.readFile('./db/db.json', 'utf8', (err, data) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Error reading file');
+            }
+            // Parse the data into an array
+            const notes = JSON.parse(data);
+            // Add the new note
+            notes.push(newNote);
+            // Write updated notes back to the file
+            fs.writeFile('./db/db.json', JSON.stringify(notes, null, 2), (err) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('Error writing file');
+                }
+                // Send back the new note to the client
+                res.json(newNote);
+            });
+        });
+    });
+
+    app.delete('/api/notes/:id', (req, res) => {
+        const noteId = req.params.id;
+        fs.readFile('./db/db.json', 'utf8', (err, data) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Error reading file');
+            }
+            let notes = JSON.parse(data);
+            // Filter out the note with the id to delete
+            notes = notes.filter(note => note.id !== noteId);
+            // Write the filtered notes back to the file
+            fs.writeFile('./db/db.json', JSON.stringify(notes, null, 2), (err) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('Error writing file');
+                }
+                res.sendStatus(200);
+            });
+        });
+    });
+
 }
