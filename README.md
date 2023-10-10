@@ -32,7 +32,7 @@ THEN I am presented with empty fields to enter a new note title and the note’s
   This project is licensed under the [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT).
   The license link can be found here https://opensource.org/licenses/MIT.
   ## Contributing
-  Contributors: <Victor Romero-Beltran>
+  Contributors: Victor Romero-Beltran
   ## Tests
   The following is needed in order to run the test: No test required for this assignment.
   ## Questions
