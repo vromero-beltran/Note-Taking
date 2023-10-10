@@ -77,22 +77,22 @@ app.post('/api/notes', (req, res) => {
 
 
 app.delete('/api/notes/:id', (req, res) => {
-    const noteId = req.params.id;
-    fs.readFile('/db/db.json', 'utf8', (err, data) => {
+    const id = req.params.id;
+    fs.readFile(path.join(__dirname, '/db/db.json'), 'utf8', (err, data) => {
         if (err) {
             console.error(err);
-            return res.status(500).send('Error reading file');
+            return res.status(500).json({ error: 'Internal Server Error' });
         }
-        let notes = JSON.parse(data);
-        // Filter out the note with the id to delete
-        notes = notes.filter(note => note.id !== noteId);
-        // Write the filtered notes back to the file
-        fs.writeFile('/db/db.json', JSON.stringify(notes, null, 2), (err) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).send('Error writing file');
+        const notes = JSON.parse(data);
+        const filteredNotes = notes.filter(note => note.id!== id);
+        fs.writeFile(path.join(__dirname, '/db/db.json'), JSON.stringify(filteredNotes), (err
+            ) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).json({ error: 'Internal Server Error' });
+                }
+                res.json(filteredNotes);
             }
-            res.sendStatus(200);
-        });
+            );
     });
 });
